@@ -84,6 +84,8 @@ gallery.forEach(
             }
         )
     }
-)
+);
+
+
 
 

@@ -35,7 +35,12 @@ h3 {
 #nav-bar {
     display: flex;
     font-size: 1.3em;
-    gap: 10px;
+    gap: 20px;
+    border-bottom: 5px solid #C7B7A3;
+}
+
+#nav-bar p {
+    margin-bottom: 5px;
 }
 
 .gallery {
