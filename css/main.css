@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Merienda:wght@300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merienda:wght@300..900&family=Quicksand:wght@300..700&display=swap');
+
+:root {
+    --heading-font-family: "Merienda", Verdana, sans-serif;
+    --body-font-family: "Quicksand", Verdana, sans-serif;
+    --grey: #808080;
+}
+
+body {
+    background-color: #EADBC8;
+    font-family: var(--body-font-family);
+    font-weight: 400;
+    font-size: 1.1em;
+}
+
+h1 {
+    font-family: var(--heading-font-family);
+    color: #76885B;
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-family: var(--heading-font-family);
+    font-size: 2em;
+}
+
+h3 {
+    font-family: var(--heading-font-family);
+    font-weight: 300;
+    font-size: 1.5em;
+}
+
+#nav-bar {
+    display: flex;
+    font-size: 1.3em;
+    gap: 10px;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.gallery-image-tile {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+}
+
+.gallery-image-tile p {
+    font-style: italic;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    color: var(--grey);
+}
+
+.gallery-image-tile img {
+    max-width: 100%;
+}
