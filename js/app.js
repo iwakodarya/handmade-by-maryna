@@ -44,7 +44,7 @@ const gallery = [
 
 ]
 
-function createGalleryHeader(name){
+function createGalleryHeader(name) {
     const headerName = document.createElement('h3');
     headerName.innerHTML = name;
     return headerName;
@@ -60,14 +60,18 @@ function createPhotoTile(imagePath, imageDescription) {
     imgDesc.innerHTML = imageDescription;
 
     imgTile.classList.add('gallery-image-tile');
-    
     imgTile.appendChild(img);
     imgTile.appendChild(imgDesc);
 
     return imgTile;
 };
 
-const galleryDiv = document.getElementById('gallery-all');
+function scrollSectionIntoView(sectionId) {
+    const clickedSection = document.getElementById(sectionId);
+    clickedSection.scrollIntoView({ behavior: "smooth" });
+};
+
+const galleryDiv = document.getElementById('gallery');
 
 gallery.forEach(
     category => {
@@ -86,6 +90,11 @@ gallery.forEach(
     }
 );
 
-
+document.getElementById('nav-bar').addEventListener('click',
+    event => {
+        const sectionId = event.target.id.replace('nav--', '');
+        scrollSectionIntoView(sectionId);
+    }
+);
 
 
