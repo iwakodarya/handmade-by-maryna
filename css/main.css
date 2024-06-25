@@ -5,10 +5,12 @@
     --heading-font-family: "Merienda", Verdana, sans-serif;
     --body-font-family: "Quicksand", Verdana, sans-serif;
     --grey: #808080;
+    --brown: #5C4033; 
+    --green: #76885B;
+    --green-30p-opacity: rgba(118, 136, 91, 0.3);
 }
 
 body {
-    background-color: #EADBC8;
     font-family: var(--body-font-family);
     font-weight: 400;
     font-size: 1.1em;
@@ -16,25 +18,32 @@ body {
 
 h1 {
     font-family: var(--heading-font-family);
-    color: #76885B;
+    color: var(--green);
     font-size: 3em;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 h2 {
     font-family: var(--heading-font-family);
+    color: var(--brown);
     font-size: 2em;
+    text-align: center;
 }
 
 h3 {
     font-family: var(--heading-font-family);
+    color: var(--brown);
     font-weight: 300;
     font-size: 1.5em;
+    text-align: center;
 }
 
 #nav-bar {
     display: flex;
+    justify-content: center;
     font-size: 1.3em;
+    color: var(--brown);
     gap: 20px;
     border-bottom: 3px solid #C7B7A3;
 }
@@ -47,16 +56,19 @@ h3 {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
+    justify-content: space-evenly;
 }
 
 .gallery-image-tile {
     display: flex;
     flex-direction: column;
-    max-width: 400px;
+    max-width: 30%;
+    min-width: 200px;
 }
 
 .gallery-image-tile p {
     font-style: italic;
+    font-size: 0.8em;
     margin-top: 0px;
     margin-bottom: 5px;
     color: var(--grey);
@@ -64,4 +76,33 @@ h3 {
 
 .gallery-image-tile img {
     max-width: 100%;
+    max-height: 100%;
+}
+
+.gallery-image-tile .img-container {
+    max-width: 100%;
+    max-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gallery-jump-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--green);
+    width: 30%;
+    max-width: 200px;
+    height: 50px;
+    border-radius: 50% 20% / 10% 40%;
+    background-color: var(--green-30p-opacity)
+}
+
+#gallery-jump-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
