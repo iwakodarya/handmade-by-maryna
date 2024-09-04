@@ -1,0 +1,16 @@
+{
+  "name": "upload-photos-to-aws",
+  "version": "1.0.0",
+  "description": "",
+  "main": "uploadToAWS.js",
+  "scripts": {
+    "go": "node uploadToAWS.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5"
+  }
+}
