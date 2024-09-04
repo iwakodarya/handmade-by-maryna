@@ -1,25 +1,30 @@
 const dotenv = require('dotenv');
 dotenv.config();
-const axios = require('axios');
+const fetch = require("node-fetch");
 
 // Global object to store googlePhotosData
 const googlePhotosData = [];
 
 // Authenticate and get Oath2 access token using refresh token
 const getAccessToken = () => {
-    return axios.post('https://oauth2.googleapis.com/token',
+    return fetch('https://oauth2.googleapis.com/token',
         {
-            'client_id': process.env.CLIENT_ID,
-            'client_secret': process.env.CLIENT_SECRET,
-            'grant_type': 'refresh_token',
-            'refresh_token': process.env.REFRESH_TOKEN,
-            'redirect_uri': 'http://localhost:3000/'
-        },
-        headers = {
-            'Content-Type': 'application/json',
+            method: 'POST',
+            body: JSON.stringify({
+                'client_id': process.env.CLIENT_ID,
+                'client_secret': process.env.CLIENT_SECRET,
+                'grant_type': 'refresh_token',
+                'refresh_token': process.env.REFRESH_TOKEN,
+                'redirect_uri': 'http://localhost:3000/'
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+            }
         },
     ).then(
-        response => response.data.access_token
+        response => response.json()
+    ).then(
+        result => result.access_token
     ).catch(
         err => console.log('Error in getAccessToken:: ', err)
     );
@@ -27,14 +32,19 @@ const getAccessToken = () => {
 
 // Get all albums in Google Photos
 const getAllAlbums = (accessToken) => {
-    return axios.get('https://photoslibrary.googleapis.com/v1/albums',
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + accessToken
+    return fetch('https://photoslibrary.googleapis.com/v1/albums',
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            }
         }
     ).then(
-        response => {
-            return response.data.albums.map(album => {
+        response => response.json()
+    )
+    .then(
+        result => {
+            return result.albums.map(album => {
                 return ({
                     'album_id': album.id,
                     'album_name': album.title
