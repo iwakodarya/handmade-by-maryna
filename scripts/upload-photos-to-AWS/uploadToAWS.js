@@ -30,6 +30,22 @@ const getAccessToken = () => {
     );
 };
 
+// Get all mediaIds from a given album
+const getAlbumPhotos = (albumId, accessToken) => {
+    return fetch('https://photoslibrary.googleapis.com/v1/mediaItems:search',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            },
+            body: JSON.stringify({ 'albumId': albumId })
+        }).then(
+            
+        )
+
+};
+
 // Get all albums in Google Photos
 const getAllAlbums = (accessToken) => {
     return fetch('https://photoslibrary.googleapis.com/v1/albums',
@@ -42,24 +58,27 @@ const getAllAlbums = (accessToken) => {
     ).then(
         response => response.json()
     )
-    .then(
-        result => {
-            return result.albums.map(album => {
-                return ({
-                    'album_id': album.id,
-                    'album_name': album.title
+        .then(
+            result => {
+                return result.albums.map(album => {
+                    return ({
+                        'album_id': album.id,
+                        'album_name': album.title
+                    })
                 })
-            })
-        }
-    ).catch(err => console.log('Error in getAllAlbums::', err))
+            }
+        ).catch(err => console.log('Error in getAllAlbums::', err))
 }
 
 // Get Google photos albums and mediaIds from 
 const getPhotosFromGooglePhotosAPI = async () => {
     const accessToken = await getAccessToken();
     // 1) Get all albums 
-    const albums = await getAllAlbums(accessToken);
-    console.log(albums)
+    const photos = await getAllAlbums(accessToken);
+    console.log(photos)
+
+    //for each ablum, fetch mediaIds from that album 
+
 };
 
 getPhotosFromGooglePhotosAPI()
