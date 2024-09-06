@@ -100,17 +100,38 @@ const getPhotosFromGooglePhotosAPI = async () => {
 
     // 1) Get all albums 
     const albums = await getAllAlbums(accessToken);
-    // 2) Fetch photos for each album
+
+    // 2) Create array for photos
+    let photos = [];
+
+    // 3) Fetch photos from each album
     for (const a of albums) {
         const mediaItems = await getAlbumPhotos(a.album_id, accessToken);
-        a['mediaItems'] = mediaItems;
-        for (const item of a['mediaItems']) {
+        
+        for (const item of mediaItems) {
             const photoBlob = await getPhoto(item.baseUrl);
             item['blob'] = photoBlob;
+            item['album_info'] = a;
+            item['key'] = item.album_info.album_name + '/' + item.mediaId;
         }
+
+        photos = photos.concat(mediaItems);
     }
-    return albums;
+    return photos;
 };
  
 const photos = await getPhotosFromGooglePhotosAPI();
+console.log(photos);
 
+// Authenticate to S3
+const s3Client = new S3Client(
+    {
+        region:'us-east-2',
+        credentials:{
+            accessKeyId: process.env.ACCESS_KEY,
+            secretAccessKey: process.env.SECRET_ACCESS_KEY
+        }
+    }
+);
+
+// upload photos, the key is folder + file name
