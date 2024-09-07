@@ -60,7 +60,7 @@ const getAlbumPhotos = (albumId, accessToken) => {
 
 // Get photo blob
 const getPhoto = (baseUrl) => {
-    return fetch(baseUrl)
+    return fetch(baseUrl+'=d')
         .then((response) => response.arrayBuffer())
         .catch((err) => console.log('Error in getPhoto():: ', err));
 };
@@ -135,7 +135,12 @@ const getBucketContents = (myS3Client) => {
                 Bucket: 'handmade-by-maryna'
             })
         )
-        .then((response) => response.Contents.map((item) => item.Key));
+        .then((response) => {
+            if (response.Contents)
+                return response.Contents.map((item) => item.Key)
+            else
+                return []
+        });
 };
 
 // Upload photos to AWS
