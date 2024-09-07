@@ -5,7 +5,8 @@ import fetch from 'node-fetch';
 import {
     S3Client,
     ListObjectsCommand,
-    PutObjectCommand
+    PutObjectCommand,
+    DeleteObjectCommand
 } from '@aws-sdk/client-s3';
 
 dotenv.config();
@@ -60,7 +61,7 @@ const getAlbumPhotos = (albumId, accessToken) => {
 
 // Get photo blob
 const getPhoto = (baseUrl) => {
-    return fetch(baseUrl+'=d')
+    return fetch(baseUrl + '=d')
         .then((response) => response.arrayBuffer())
         .catch((err) => console.log('Error in getPhoto():: ', err));
 };
@@ -137,9 +138,8 @@ const getBucketContents = (myS3Client) => {
         )
         .then((response) => {
             if (response.Contents)
-                return response.Contents.map((item) => item.Key)
-            else
-                return []
+                return response.Contents.map((item) => item.Key);
+            else return [];
         });
 };
 
@@ -154,8 +154,21 @@ const uploadPhotoToAWS = (myS3Client, key, body) => {
                 ContentType: 'image/jpeg'
             })
         )
-        .then(console.log('Succesfully uploaded: ', key))
+        .then(console.log('Successfully uploaded: ', key))
         .catch((err) => console.log('Error uploading ', key, ':: ', err));
+};
+
+// Delete photo from AWS
+const deletePhotoFromAWS = (myS3Client, key) => {
+    return myS3Client
+        .send(
+            new DeleteObjectCommand({
+                Bucket: 'handmade-by-maryna',
+                Key: key
+            })
+        )
+        .then(console.log('Successfully deleted: ', key))
+        .catch((err) => console.log('Error deleting ', key, ':: ', err));
 };
 
 // <-- MAIN FUNCTION -->
@@ -169,23 +182,34 @@ const updateS3Bucket = async () => {
         return !s3PhotoKeys.includes(photo.key);
     });
 
+    // Run uploads of newly added photos
     const uploadsResult = await Promise.allSettled(
         photosToUpload.map((photo) =>
             uploadPhotoToAWS(myS3Client, photo.key, photo.blob)
         )
     );
-    
+
     const photosToDelete = s3PhotoKeys.filter((key) => {
         return !photos.map((photo) => photo.key).includes(key);
     });
-    //TODO: Implement delete process
 
+    console.log(photosToDelete);
+    // Run delete for any removed photos
+    const deleteResult = await Promise.allSettled(
+        photosToDelete.map((key) => deletePhotoFromAWS(myS3Client, key))
+    );
+
+    // Print summary of what the script did
     console.log(
         `Script run complete!\nUploaded count: ${
-            uploadsResult.filter((res) => (res.status = 'fulfilled')).length
+            uploadsResult.filter((res) => res.status === 'fulfilled').length
         }\nFailed to upload count: ${
-            uploadsResult.filter((res) => (res.status = 'rejected')).length
-        }\nDeleted count: NA\nFailed to delete count: NA`
+            uploadsResult.filter((res) => res.status === 'rejected').length
+        }\nDeleted count: ${
+            deleteResult.filter((res) => res.status === 'fulfilled').length
+        }\nFailed to delete count: ${
+            deleteResult.filter((res) => res.status === 'rejected').length
+        }`
     );
 };
 
