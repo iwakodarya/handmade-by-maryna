@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Handmade by Maryna Chumakova</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/main.css">
+    <!-- <script defer src="js/app.js"></script> -->
+</head>
+
+<body>
+    <div id="header">
+        <h1>Handmade</h1>
+        <h1>~ by ~</h1>
+        <h1>Maryna Chumakova</h1>
+    </div>
+    <div id="nav-bar">
+        <p id="nav--home">Home</p>
+        <p id="nav--gallery">Gallery</p>
+        <p id="nav--contact-me">Contact me</p>
+    </div>
+    <div id="content">
+        <!-- Caraousel -->
+        <div id="home-carousel" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#home-carousel" data-slide-to="0" class="active"></li>
+                <li data-target="#home-carousel" data-slide-to="1"></li>
+                <li data-target="#home-carousel" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="d-block w-100" src="../images/home/flowers.jpg" alt="First slide">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100" src="../images/01-polymer-clay/barrette1.jpg" alt="Second slide">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100" src="../images/home/beads.jpg" alt="Third slide">
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#home-carousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#home-carousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+        <!-- Welcome card -->
+        <div id="welcome" class="card-with-button">
+            <h2>Welcome!</h2>
+            <p>This site contains a gallery of my handmade work, made using various mediums including polymer clay, felt and
+                more! I find inspiration in the beauty of nature that surrounds us. </p>
+            <button>See full gallery</button>
+        </div>
+        <!-- Etsy hero -->
+        <div id="etsy-hero" class="card-with-button">
+            <p>You can find select handmade work for sale in my Etsy shop!</p>
+            <a href="https://www.etsy.com/shop/MELODIshop" target="_blank">
+                <button type="button">Shop on Etsy</button>
+            </a>
+        </div>
+    </div>
+    <footer>
+    </footer>
+</body>
+
+</html>
