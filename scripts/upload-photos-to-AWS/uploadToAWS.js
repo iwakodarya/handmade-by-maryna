@@ -4,10 +4,13 @@ import fetch from 'node-fetch';
 // Amazon AWS S3
 import {
     S3Client,
+    ListObjectsCommand,
     PutObjectCommand
 } from "@aws-sdk/client-s3";
 
 dotenv.config();
+
+// <--- GOOGLE PHOTOS API FUNCTIONS --->
 
 // Authenticate and get Oath2 access token using refresh token
 const getAccessToken = () => {
@@ -53,7 +56,8 @@ const getAlbumPhotos = (albumId, accessToken) => {
                         return ({
                             'mediaId': item.id,
                             'mimeType': item.mimeType,
-                            'baseUrl': item.baseUrl
+                            'baseUrl': item.baseUrl,
+                            'description': item.description
                         })
                     })
                 }
@@ -65,6 +69,7 @@ const getAlbumPhotos = (albumId, accessToken) => {
         );
 };
 
+// Get photo blob
 const getPhoto = (baseUrl) => {
     return fetch(baseUrl)
         .then(response => response.blob())
@@ -112,26 +117,45 @@ const getPhotosFromGooglePhotosAPI = async () => {
             const photoBlob = await getPhoto(item.baseUrl);
             item['blob'] = photoBlob;
             item['album_info'] = a;
-            item['key'] = item.album_info.album_name + '/' + item.mediaId;
+            item['key'] = `${item.album_info.album_name}/${item.description || 'single'}_${item.mediaId}`;
         }
 
         photos = photos.concat(mediaItems);
     }
     return photos;
 };
- 
-const photos = await getPhotosFromGooglePhotosAPI();
-console.log(photos);
+
+// <-- AWS S3 FUNCTIONS --> 
 
 // Authenticate to S3
-const s3Client = new S3Client(
-    {
-        region:'us-east-2',
-        credentials:{
-            accessKeyId: process.env.ACCESS_KEY,
-            secretAccessKey: process.env.SECRET_ACCESS_KEY
-        }
-    }
-);
+const createAWSClient = () => {
+    return new S3Client(
+        {
+            region: 'us-east-2',
+            credentials: {
+                accessKeyId: process.env.ACCESS_KEY,
+                secretAccessKey: process.env.SECRET_ACCESS_KEY
+            }
+        })
+};
 
-// upload photos, the key is folder + file name
+// Make a list of things already in bucket 
+const getBucketContents = () => {
+    return myS3Client.send(
+        new ListObjectsCommand(
+            {
+                'Bucket': 'handmade-by-maryna'
+            }
+        )
+    ).then(
+        response => response.Contents.map(item => item.Key)
+    )
+};
+
+// <-- MAIN FUNCTION -->
+const updateS3Bucket = async () => {
+    const photos = await getPhotosFromGooglePhotosAPI();
+    console.log(photos)
+};
+
+updateS3Bucket()
