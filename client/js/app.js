@@ -1,162 +1,71 @@
-// Create gallery tiles for all the photos in the /images folder
+const getPhotoKeysInFolder = async (prefix) => {
+    AWS.config.region = 'us-east-2';
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'us-east-2:62f94c93-d03e-4a62-bd05-ecbec4365393'
+    });
 
-const gallery = [
-    {
-        category_name: "Polymer Clay",
-        id: "polymer-clay",
-        folder_name: "01-polymer-clay",
-        items: [
-            {
-                name: "bead_bracelet",
-                desc: "This is a bracelet."
-            },
-            {
-                name: "barrette1",
-                desc: "This is a barrette."
-            },
-            {
-                name: "yellow_bow",
-                desc: "This is a barrette."
-            },
-            {
-                name: "barrette2",
-                desc: "This is a barrette."
-            },
-            {
-                name: "barrette3",
-                desc: "This is a barrette."
-            },
-            {
-                name: "brown_bow",
-                desc: "This is a barrette."
-            },
+    const s3 = new AWS.S3({
+        apiVersion: '2006-03-01',
+        params: {
+            Bucket: 'handmade-by-maryna'
+        }
+    });
 
-        ]
-    },
-    {
-        category_name: "Felting",
-        id: "felting",
-        folder_name: "03-felting",
-        items: [
-            {
-                name: "felt_flowers",
-                desc: "Felt flowers."
-            },
-            {
-                name: "felt_mittens",
-                desc: "Felt mittens."
-            },
-            {
-                name: "felt_pumpkin1",
-                desc: "Felt pumpkin."
-            },
-            {
-                name: "felt_pumpkin2",
-                desc: "Felt pumpkin."
-            },
-            {
-                name: "felt_star",
-                desc: "Felt star."
-            },
-        
-        ]
-    },
-    {
-        category_name: "Watercolor",
-        id: "watercolor",
-        folder_name: "02-watercolor",
-        items: [
-            {
-                name: "golden_retriever",
-                desc: "Watercolor painting of a golden retriever named Lucy."
-            }
-        ]
-    },
+    try {
+        const data = await s3
+            .listObjects({
+                Bucket: 'handmade-by-maryna',
+                Prefix: prefix
+            })
+            .promise();
 
-]
-
-function createGalleryHeader(name) {
-    const headerName = document.createElement('h3');
-    headerName.innerHTML = name;
-    return headerName;
+        return data.Contents;
+    } catch (err) {
+        console.log(`Error fetching ${prefix} photos :: `, err);
+    }
 };
 
-function createPhotoTile(imagePath, imageDescription) {
-    const imgTile = document.createElement('div');
-    // Image (in div container)
-    const imgContainer = document.createElement('div');
-    imgContainer.classList.add('img-container');
-    const img = document.createElement('img');
-    img.setAttribute('src', imagePath);
-    imgContainer.appendChild(img);
-    // Desc text
-    const imgDesc = document.createElement('p');
-    imgDesc.innerHTML = imageDescription;
+// Create the carousel component
+const loadCarousel = async () => {
+    const indicators = document.createElement('ol');
+    indicators.classList.add('carousel-indicators');
 
-    imgTile.classList.add('gallery-image-tile');
-    imgTile.appendChild(imgContainer);
-    imgTile.appendChild(imgDesc);
+    const photosDiv = document.createElement('div');
+    photosDiv.classList.add('carousel-inner');
 
-    return imgTile;
+    const bucketHref = 'https://handmade-by-maryna.s3.us-east-2.amazonaws.com/';
+    const carouselPhotosList = await getPhotoKeysInFolder('home_carousel/');
+
+    // Create indicator elements
+    for (let i = 0; i < carouselPhotosList.length; i++) {
+        const indicator = document.createElement('li');
+        indicator.setAttribute('data-target', '#home-carousel');
+        indicator.setAttribute('data-slide-to', i.toString());
+        if (i == 0) indicator.classList.add('active');
+        indicators.appendChild(indicator);
+    }
+
+    // Create photo elements
+    carouselPhotosList.forEach((photo, photoIndex) => {
+        const imageDiv = document.createElement('div');
+        imageDiv.classList.add('carousel-item');
+        const image = document.createElement('img');
+        image.className = 'd-block w-100';
+        image.setAttribute('src', bucketHref + photo.Key);
+        imageDiv.appendChild(image);
+
+        if (photoIndex == 0)
+            imageDiv.classList.add('active');
+        photosDiv.appendChild(imageDiv);
+    });
+
+    //append to DOM
+    const carouselMainParent = document.getElementById('home-carousel');
+    carouselMainParent.insertBefore(indicators, carouselMainParent.firstChild);
+    carouselMainParent.insertBefore(
+        photosDiv,
+        carouselMainParent.firstChild.nextSibling
+    );
 };
 
-function scrollSectionIntoView(sectionId) {
-    const clickedSection = document.getElementById(sectionId);
-    clickedSection.scrollIntoView({ behavior: "smooth" });
-};
-
-/* Get element that starts the gallery */
-const galleryDiv = document.getElementById('gallery');
-
-/* Create buttons to jump to gallery sections */
-const galleryJumpButtons = document.createElement('div');
-galleryJumpButtons.id = 'gallery-jump-buttons-container';
-galleryDiv.appendChild(galleryJumpButtons);
-
-gallery.forEach(
-    category => {
-        const categoryButton = document.createElement('p');
-        categoryButton.classList.add('gallery-jump-button');
-        categoryButton.innerHTML = category.category_name;
-        categoryButton.id = 'nav--' + category.id;
-        galleryJumpButtons.appendChild(categoryButton);
-    }
-);
-
-/* Create header and gallery for each subsection, eg 'Polymer Clay' */
-gallery.forEach(
-    category => {
-        const folderPath = category.folder_name;
-        const galleryHeader = createGalleryHeader(category.category_name);
-        galleryHeader.id = category.id;
-        galleryDiv.appendChild(galleryHeader);
-        const galleryGrid = document.createElement('div');
-        galleryGrid.classList.add('gallery');
-        galleryDiv.appendChild(galleryGrid);
-
-        category.items.forEach(
-            item => {
-                const photoPath = `images/${folderPath}/${item.name}.JPG`;
-                galleryGrid.appendChild(createPhotoTile(photoPath, item.desc));
-            }
-        )
-    }
-);
-
-/* Scroll to section on nav bar click */
-document.getElementById('nav-bar').addEventListener('click',
-    event => {
-        const sectionId = event.target.id.replace('nav--', '');
-        scrollSectionIntoView(sectionId);
-    }
-);
-
-/* Scroll to gallery section on click */
-document.getElementById('gallery-jump-buttons-container').addEventListener('click', 
-    event => {
-        const sectionId = event.target.id.replace('nav--', '');
-        scrollSectionIntoView(sectionId);
-    }
-)
-
-
+window.addEventListener('DOMContentLoaded', loadCarousel);
