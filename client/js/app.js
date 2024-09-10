@@ -54,8 +54,7 @@ const loadCarousel = async () => {
         image.setAttribute('src', bucketHref + photo.Key);
         imageDiv.appendChild(image);
 
-        if (photoIndex == 0)
-            imageDiv.classList.add('active');
+        if (photoIndex == 0) imageDiv.classList.add('active');
         photosDiv.appendChild(imageDiv);
     });
 
@@ -82,10 +81,10 @@ const loadCarousel = async () => {
 
     //append to DOM
     const carouselMainParent = document.getElementById('home-carousel');
-    carouselMainParent.appendChild(indicators)
-    carouselMainParent.appendChild(photosDiv)
-    carouselMainParent.appendChild(prevControl)
-    carouselMainParent.appendChild(nextControl)
+    carouselMainParent.appendChild(indicators);
+    carouselMainParent.appendChild(photosDiv);
+    carouselMainParent.appendChild(prevControl);
+    carouselMainParent.appendChild(nextControl);
 };
 
 window.addEventListener('DOMContentLoaded', loadCarousel);
