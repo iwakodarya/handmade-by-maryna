@@ -25,8 +25,6 @@ const loadGalleryAlbums = async () => {
 };
 
 const createGalleryAlbum = (albumInfo) => {
-    console.log('albumInfo -->', albumInfo);
-    console.log('albumInfo.coverPhotoSrc -->', albumInfo.coverPhotoSrc)
     const albumDiv = document.createElement('div');
     albumDiv.classList.add('gallery-album');
     const albumImg = document.createElement('img');
