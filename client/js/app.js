@@ -59,13 +59,33 @@ const loadCarousel = async () => {
         photosDiv.appendChild(imageDiv);
     });
 
+    // Create controls
+    const prevControl = document.createElement('a');
+    prevControl.className = 'carousel-control-prev';
+    prevControl.href = `#home-carousel`;
+    prevControl.setAttribute('role', 'button');
+    prevControl.setAttribute('data-slide', 'prev');
+    prevControl.innerHTML = `
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    `;
+
+    const nextControl = document.createElement('a');
+    nextControl.className = 'carousel-control-next';
+    nextControl.href = `#home-carousel`;
+    nextControl.setAttribute('role', 'button');
+    nextControl.setAttribute('data-slide', 'next');
+    nextControl.innerHTML = `
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    `;
+
     //append to DOM
     const carouselMainParent = document.getElementById('home-carousel');
-    carouselMainParent.insertBefore(indicators, carouselMainParent.firstChild);
-    carouselMainParent.insertBefore(
-        photosDiv,
-        carouselMainParent.firstChild.nextSibling
-    );
+    carouselMainParent.appendChild(indicators)
+    carouselMainParent.appendChild(photosDiv)
+    carouselMainParent.appendChild(prevControl)
+    carouselMainParent.appendChild(nextControl)
 };
 
 window.addEventListener('DOMContentLoaded', loadCarousel);
