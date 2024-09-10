@@ -1,22 +1,36 @@
 // Load gallery menu
 const galleryMenuFolders = [
     {
-        folderPath: 'polymer_clay/',
-        displayName: 'Polymer Clay',
-        coverPhotoKey: 'https://handmade-by-maryna.s3.us-east-2.amazonaws.com/home_carousel/single_AA8nhe7TtnNinyUedbvDsn1hVoRKNM2v2ZaXyEX-udlD83fMsWrRH1ZPh6L3cClnNfVbbK3OC_hr29ut137BOxooujsWhE5eXA.jpeg'
+        albumName: 'polymer_clay',
+        displayName: 'Polymer Clay'
     },
     {
-        folderPath: 'felting/',
-        displayName: 'Felting',
-        coverPhotoKey: 'https://handmade-by-maryna.s3.us-east-2.amazonaws.com/home_carousel/single_AA8nhe6YswF68wFKyj_jwKJWvbWuOEv3dgz9qWyGaDW-Cd5hmXxgSnA5l5XZUXeNc_hWFjenSWi0YrTGmdhuV7Q8eJk12yRGzg.jpeg'
+        albumName: 'felting',
+        displayName: 'Felting'
     }
 ];
 
+const loadGalleryAlbums = async () => {
+    // Get album cover photos
+    for (const album of galleryMenuFolders) {
+        const baseS3URL =
+            'https://handmade-by-maryna.s3.us-east-2.amazonaws.com/';
+        const coverAlbumKey = 'gallery_cover_' + album.albumName + '/';
+        // Get first (and only) photo from designated cover album
+        const coverPhotoKeys = await getPhotoKeysInFolder(coverAlbumKey);
+        album.coverPhotoSrc = baseS3URL + coverPhotoKeys[0].Key;
+    }
+
+    galleryMenuFolders.forEach((album) => createGalleryAlbum(album));
+};
+
 const createGalleryAlbum = (albumInfo) => {
+    console.log('albumInfo -->', albumInfo);
+    console.log('albumInfo.coverPhotoSrc -->', albumInfo.coverPhotoSrc)
     const albumDiv = document.createElement('div');
     albumDiv.classList.add('gallery-album');
     const albumImg = document.createElement('img');
-    albumImg.src = albumInfo.coverPhotoKey;
+    albumImg.src = albumInfo.coverPhotoSrc;
     const albumTitle = document.createElement('p');
     albumTitle.innerHTML = albumInfo.displayName;
 
@@ -26,6 +40,4 @@ const createGalleryAlbum = (albumInfo) => {
     document.getElementById('gallery-menu').appendChild(albumDiv);
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    galleryMenuFolders.forEach((album) => createGalleryAlbum(album));
-});
+document.addEventListener('DOMContentLoaded', loadGalleryAlbums);
