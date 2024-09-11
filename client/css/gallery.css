@@ -8,20 +8,26 @@
     min-width: 200px;
     max-width: 25%;
     position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+}
+
+.gallery-album:hover {
+    opacity: 80%;
 }
 
 .gallery-album img {
     max-width: 100%;
-    border-radius: 15px;
 }
 
 .gallery-album p {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    margin-bottom: 0px;
+    bottom: 0;
+    /* transform: translate(-50%, -50%); */
     background-color: rgba(255, 255, 255, 0.6);
     width: 100%;
     text-align: center;
-    font-size: 1.2em;
+    font-size: 1.3em;
 }
