@@ -10,15 +10,13 @@ const galleryMenuFolders = [
     }
 ];
 
-const loadGalleryAlbums = async () => {
+const showGalleryMenu = async () => {
     // Get album cover photos
     for (const album of galleryMenuFolders) {
-        const baseS3URL =
-            'https://handmade-by-maryna.s3.us-east-2.amazonaws.com/';
         const coverAlbumKey = 'gallery_cover_' + album.albumName + '/';
         // Get first (and only) photo from designated cover album
         const coverPhotoKeys = await getPhotoKeysInFolder(coverAlbumKey);
-        album.coverPhotoSrc = baseS3URL + coverPhotoKeys[0].Key;
+        album.coverPhotoSrc = BUCKET_URL + coverPhotoKeys[0].Key;
 
         // Create album
         createGalleryAlbum(album);
@@ -50,23 +48,49 @@ const showBackButton = () => {
 
 const showAlbumPhotos = async (selectedAlbum) => {
     const albumPhotoKeys = await getPhotoKeysInFolder(selectedAlbum + '/');
-    console.log(albumPhotoKeys);
+    for (photo of albumPhotoKeys) {
+        const photoElement = document.createElement('img');
+        photoElement.src = BUCKET_URL + photo.Key;
+        photoElement.classList.add('gallery-photo');
+        document.getElementById('gallery-photos').appendChild(photoElement);
+    }
     // TO DO: hide menu, show back button, call a function to show each of the photos
 };
 
+const hideAlbumPhotos = () => {
+    document.getElementById('gallery-photos').innerHTML = '';
+};
+
+const hideBackButton = () => {
+    document.getElementById('gallery-back-button').innerHTML = '';
+};
+
+const hideGalleryMenu = () => {
+    document.getElementById('gallery-menu').innerHTML = '';
+};
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadGalleryAlbums();
+    showGalleryMenu();
 
     // Behavior on album click
-    // TO DO fix problem when user clicks outside of album (if statement?)
     document
         .getElementById('gallery-menu')
         .addEventListener('click', (event) => {
-            showAlbumPhotos(event.target.parentElement.id);
+            if (event.target.id !== 'gallery-menu') {
+                hideGalleryMenu();
+                showAlbumPhotos(event.target.parentElement.id);
+                showBackButton();
+            }
         });
-    
+
     // Behavior on "Back" button click
+    document
+        .getElementById('gallery-back-button')
+        .addEventListener('click', (event) => {
+            if (event.target.nodeName == 'BUTTON') {
+                hideBackButton();
+                hideAlbumPhotos();
+                showGalleryMenu();
+            }
+        });
 });
-
-

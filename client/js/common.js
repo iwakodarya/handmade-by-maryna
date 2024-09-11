@@ -1,3 +1,6 @@
+const BUCKET_NAME = 'handmade-by-maryna';
+const BUCKET_URL  = 'https://handmade-by-maryna.s3.us-east-2.amazonaws.com/';
+
 const getPhotoKeysInFolder = async (prefix) => {
     AWS.config.region = 'us-east-2';
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
