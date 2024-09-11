@@ -1,6 +1,24 @@
+#gallery-app {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#gallery-back-button {
+    display: flex;
+    align-items: center;
+    width: 200px;
+    margin: auto;
+}
+
+#gallery-back-button:hover {
+    opacity: 80%;
+}
+
 #gallery-menu {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 30px;
 }
 
