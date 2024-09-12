@@ -1,5 +1,4 @@
-// Load gallery menu
-const galleryMenuFolders = [
+const galleryData = [
     {
         albumName: 'polymer_clay',
         displayName: 'Polymer Clay'
@@ -12,11 +11,14 @@ const galleryMenuFolders = [
 
 const showGalleryMenu = async () => {
     // Get album cover photos
-    for (const album of galleryMenuFolders) {
-        const coverAlbumKey = 'gallery_cover_' + album.albumName + '/';
-        // Get first (and only) photo from designated cover album
-        const coverPhotoKeys = await getPhotoKeysInFolder(coverAlbumKey);
-        album.coverPhotoSrc = BUCKET_URL + coverPhotoKeys[0].Key;
+    for (const album of galleryData) {
+        // If album covers aren't cached yet, fetch them.
+        if (!album.coverPhotoSrc) {
+            // Get first (and only) photo from designated cover album
+            const coverAlbumKey = 'gallery_cover_' + album.albumName + '/';
+            const coverPhotoKeys = await getPhotoKeysInFolder(coverAlbumKey);
+            album.coverPhotoSrc = BUCKET_URL + coverPhotoKeys[0].Key;
+        }
 
         // Create album
         createGalleryAlbum(album);
@@ -47,14 +49,22 @@ const showBackButton = () => {
 };
 
 const showAlbumPhotos = async (selectedAlbum) => {
-    const albumPhotoKeys = await getPhotoKeysInFolder(selectedAlbum + '/');
-    for (photo of albumPhotoKeys) {
+    const galleryDataAlbum = galleryData.find(
+        (album) => album.albumName === selectedAlbum
+    );
+    // If photoKeys aren't cached yet, fetch them.
+    if (!galleryDataAlbum.photoKeys) {
+        galleryDataAlbum.photoKeys = await getPhotoKeysInFolder(
+            selectedAlbum + '/'
+        );
+    }
+
+    for (photo of galleryDataAlbum.photoKeys) {
         const photoElement = document.createElement('img');
         photoElement.src = BUCKET_URL + photo.Key;
         photoElement.classList.add('gallery-photo');
         document.getElementById('gallery-photos').appendChild(photoElement);
     }
-    // TO DO: hide menu, show back button, call a function to show each of the photos
 };
 
 const hideAlbumPhotos = () => {
