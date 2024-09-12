@@ -48,7 +48,7 @@ const showBackButton = () => {
     document.getElementById('gallery-back-button').appendChild(backButton);
 };
 
-const showAlbumPhotos = async (selectedAlbum) => {
+const getAlbumPhotosFromS3 = async (selectedAlbum) => {
     const galleryDataAlbum = galleryData.find(
         (album) => album.albumName === selectedAlbum
     );
@@ -57,11 +57,33 @@ const showAlbumPhotos = async (selectedAlbum) => {
         galleryDataAlbum.photoKeys = await getPhotoKeysInFolder(
             selectedAlbum + '/'
         );
+        // group collages into arrays to treat them separately
+        galleryDataAlbum.photoKeys = galleryDataAlbum.photoKeys
+            .map((photo) => {
+                if (photo.Key.includes('/single_')) return photo.Key;
+                else if (photo.Key.match('collage_[a-zA-Z0-9]*_1_')) {
+                    // get name key of this photo
+                    const nameKey = photo.Key.match('collage_[a-zA-Z0-9]*_')[0];
+                    // find other photos with this nameKey
+                    const collagePhotos = galleryDataAlbum.photoKeys
+                        .filter((photo) => photo.Key.includes(nameKey))
+                        .map((photo) => photo.Key);
+                    return collagePhotos.sort();
+                }
+            })
+            // remove remaining photos that are part of a collage
+            .filter((photo) => photo !== undefined);
     }
+    return galleryDataAlbum;
+};
 
-    for (photo of galleryDataAlbum.photoKeys) {
+const showAlbumPhotos = async (selectedAlbum) => {
+    const galleryDataAlbum = await getAlbumPhotosFromS3(selectedAlbum);
+    console.log(galleryDataAlbum.photoKeys);
+
+    for (key of galleryDataAlbum.photoKeys) {
         const photoElement = document.createElement('img');
-        photoElement.src = BUCKET_URL + photo.Key;
+        photoElement.src = BUCKET_URL + key;
         photoElement.classList.add('gallery-photo');
         document.getElementById('gallery-photos').appendChild(photoElement);
     }
