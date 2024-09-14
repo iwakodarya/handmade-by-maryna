@@ -48,6 +48,11 @@ const showBackButton = () => {
     document.getElementById('gallery-back-button').appendChild(backButton);
 };
 
+const showGalleryAlbumHeader = (albumName) => {
+    // Update title to include album name
+    document.getElementById('gallery-title').innerHTML = albumName;
+};
+
 const getAlbumPhotosFromS3 = async (selectedAlbum) => {
     const galleryDataAlbum = galleryData.find(
         (album) => album.albumName === selectedAlbum
@@ -79,7 +84,8 @@ const getAlbumPhotosFromS3 = async (selectedAlbum) => {
 
 const showAlbumPhotos = async (selectedAlbum) => {
     const galleryDataAlbum = await getAlbumPhotosFromS3(selectedAlbum);
-    console.log(galleryDataAlbum.photoKeys);
+
+    showGalleryAlbumHeader(galleryDataAlbum.displayName);
 
     for (key of galleryDataAlbum.photoKeys) {
         const photoElement = document.createElement('img');

@@ -5,18 +5,23 @@
 #gallery-app {
     display: flex;
     flex-direction: column;
-    gap: 20px;
 }
 
 #gallery-back-button {
     display: flex;
+    justify-content: start;
     align-items: center;
-    width: 200px;
-    margin: auto;
+    margin-top: 20px;
 }
 
-#gallery-back-button:hover {
+#gallery-back-button button:hover {
     opacity: 80%;
+}
+
+#gallery-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #gallery-menu {
