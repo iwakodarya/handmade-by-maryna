@@ -64,11 +64,34 @@
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
+    align-items: center;
 }
 
-#gallery-photos img {
+.gallery-photo {
     max-width: 30%;
-    min-width: 200px;
-    max-height: 300px;
-    object-fit: contain;
+    position: relative;
+}
+
+.gallery-photo img {
+    max-height: 350px;
+    width: 100%;
+    z-index: 1;
+}
+
+.gallery-photo img:hover {
+    opacity: 80%;
+}
+
+.gallery-photo p {
+    position: absolute;
+    z-index: 2;
+    width: 30px;
+    height: 30px;
+    top: -15px;
+    right: -15px;
+    background-color: var(--brown);
+    color: white;
+    text-align: center;
+    font-size: 1.2em;
+    border-radius: 50%;
 }

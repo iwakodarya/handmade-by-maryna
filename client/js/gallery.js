@@ -10,6 +10,9 @@ const galleryData = [
 ];
 
 const showGalleryMenu = async () => {
+    // Re-set "Gallery" as title
+    document.getElementById('gallery-title').innerHTML = 'Gallery';
+
     // Get album cover photos
     for (const album of galleryData) {
         // If album covers aren't cached yet, fetch them.
@@ -88,8 +91,20 @@ const showAlbumPhotos = async (selectedAlbum) => {
     showGalleryAlbumHeader(galleryDataAlbum.displayName);
 
     for (key of galleryDataAlbum.photoKeys) {
-        const photoElement = document.createElement('img');
-        photoElement.src = BUCKET_URL + key;
+        const photoElement = document.createElement('div');
+        const photo = document.createElement('img');
+
+        // handle collage images
+        if (typeof key === 'object') {
+            photo.src = BUCKET_URL + key[0];
+            const numPhotosIcon = document.createElement('p');
+            numPhotosIcon.classList.add('photo-count-icon');
+            numPhotosIcon.innerHTML = key.length;
+            photoElement.appendChild(numPhotosIcon);
+        } else photo.src = BUCKET_URL + key;
+
+        // Append to DOM
+        photoElement.appendChild(photo);
         photoElement.classList.add('gallery-photo');
         document.getElementById('gallery-photos').appendChild(photoElement);
     }
@@ -107,6 +122,10 @@ const hideGalleryMenu = () => {
     document.getElementById('gallery-menu').innerHTML = '';
 };
 
+const hideGalleryAblumTitle = () => {
+    document.getElementById('gallery-title').innerHTML = '';
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     showGalleryMenu();
 
@@ -116,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .addEventListener('click', (event) => {
             if (event.target.id !== 'gallery-menu') {
                 hideGalleryMenu();
+                hideGalleryAblumTitle();
                 showAlbumPhotos(event.target.parentElement.id);
                 showBackButton();
             }
@@ -127,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .addEventListener('click', (event) => {
             if (event.target.nodeName == 'BUTTON') {
                 hideBackButton();
+                hideGalleryAblumTitle();
                 hideAlbumPhotos();
                 showGalleryMenu();
             }
