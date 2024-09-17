@@ -110,6 +110,28 @@ const showAlbumPhotos = async (selectedAlbum) => {
     }
 };
 
+const showSinglePhotoModal = (imageSrc) => {
+    document.getElementById(
+        'gallery-photo-modal'
+    ).innerHTML = `<div id="single-photo-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="${imageSrc}" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    const modal = new bootstrap.Modal(
+        document.getElementById('single-photo-modal')
+    );
+    modal.show();
+};
+
 const hideAlbumPhotos = () => {
     document.getElementById('gallery-photos').innerHTML = '';
 };
@@ -150,6 +172,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideGalleryAblumTitle();
                 hideAlbumPhotos();
                 showGalleryMenu();
+            }
+        });
+
+    // Behavior on image click
+    document
+        .getElementById('gallery-photos')
+        .addEventListener('click', (event) => {
+            if (event.target.nodeName == 'IMG') {
+                // Create a modal with this image source
+                showSinglePhotoModal(event.target.getAttribute('src'));
             }
         });
 });

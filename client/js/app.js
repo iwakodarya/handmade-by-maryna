@@ -1,7 +1,6 @@
-
 // Create the carousel component
 const loadCarousel = async () => {
-    const indicators = document.createElement('ol');
+    const indicators = document.createElement('div');
     indicators.classList.add('carousel-indicators');
 
     const photosDiv = document.createElement('div');
@@ -12,9 +11,10 @@ const loadCarousel = async () => {
 
     // Create indicator elements
     for (let i = 0; i < carouselPhotosList.length; i++) {
-        const indicator = document.createElement('li');
-        indicator.setAttribute('data-target', '#home-carousel');
-        indicator.setAttribute('data-slide-to', i.toString());
+        const indicator = document.createElement('button');
+        indicator.setAttribute('type', 'button');
+        indicator.setAttribute('data-bs-target', '#home-carousel');
+        indicator.setAttribute('data-bs-slide-to', i.toString());
         if (i == 0) indicator.classList.add('active');
         indicators.appendChild(indicator);
     }
@@ -33,24 +33,24 @@ const loadCarousel = async () => {
     });
 
     // Create controls
-    const prevControl = document.createElement('a');
+    const prevControl = document.createElement('button');
     prevControl.className = 'carousel-control-prev';
-    prevControl.href = `#home-carousel`;
-    prevControl.setAttribute('role', 'button');
-    prevControl.setAttribute('data-slide', 'prev');
+    prevControl.setAttribute('type', 'button');
+    prevControl.setAttribute('data-bs-target', '#home-carousel');
+    prevControl.setAttribute('data-bs-slide', 'prev');
     prevControl.innerHTML = `
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
+        <span class="visually-hidden">Previous</span>
     `;
 
-    const nextControl = document.createElement('a');
+    const nextControl = document.createElement('button');
     nextControl.className = 'carousel-control-next';
-    nextControl.href = `#home-carousel`;
-    nextControl.setAttribute('role', 'button');
-    nextControl.setAttribute('data-slide', 'next');
+    nextControl.setAttribute('type', 'button');
+    nextControl.setAttribute('data-bs-target', '#home-carousel');
+    nextControl.setAttribute('data-bs-slide', 'next');
     nextControl.innerHTML = `
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
+        <span class="visually-hidden">Next</span>
     `;
 
     //append to DOM
