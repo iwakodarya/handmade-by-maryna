@@ -20,7 +20,7 @@ const showGalleryMenu = async () => {
             // Get first (and only) photo from designated cover album
             const coverAlbumKey = 'gallery_cover_' + album.albumName + '/';
             const coverPhotoKeys = await getPhotoKeysInFolder(coverAlbumKey);
-            album.coverPhotoSrc = BUCKET_URL + coverPhotoKeys[0].Key;
+            album.coverPhotoSrc = BUCKET_URL + coverPhotoKeys[0];
         }
 
         // Create album
@@ -67,16 +67,19 @@ const getAlbumPhotosFromS3 = async (selectedAlbum) => {
         );
         // group collages into arrays to treat them separately
         galleryDataAlbum.photoKeys = galleryDataAlbum.photoKeys
-            .map((photo) => {
-                if (photo.Key.includes('/single_')) return photo.Key;
-                else if (photo.Key.match('collage_[a-zA-Z0-9]*_1_')) {
+            .map((key) => {
+                if (key.includes('/single_')) return key;
+                else if (key.match('collage_[a-zA-Z0-9]*_1_')) {
                     // get name key of this photo
-                    const nameKey = photo.Key.match('collage_[a-zA-Z0-9]*_')[0];
+                    const nameKey = key.match('collage_[a-zA-Z0-9]*_')[0];
                     // find other photos with this nameKey
-                    const collagePhotos = galleryDataAlbum.photoKeys
-                        .filter((photo) => photo.Key.includes(nameKey))
-                        .map((photo) => photo.Key);
-                    return collagePhotos.sort();
+                    const collagePhotos = galleryDataAlbum.photoKeys.filter(
+                        (key) => key.includes(nameKey)
+                    );
+                    return {
+                        id: nameKey,
+                        photos: collagePhotos.sort()
+                    };
                 }
             })
             // remove remaining photos that are part of a collage
@@ -90,18 +93,24 @@ const showAlbumPhotos = async (selectedAlbum) => {
 
     showGalleryAlbumHeader(galleryDataAlbum.displayName);
 
-    for (key of galleryDataAlbum.photoKeys) {
+    for (item of galleryDataAlbum.photoKeys) {
         const photoElement = document.createElement('div');
         const photo = document.createElement('img');
 
         // handle collage images
-        if (typeof key === 'object') {
-            photo.src = BUCKET_URL + key[0];
+        if (typeof item === 'object') {
+            photo.src = BUCKET_URL + item.photos[0];
+            photo.setAttribute('data-photo-type', 'collage');
+            photo.setAttribute('data-collage-id', item.id);
+            photo.setAttribute('data-album', selectedAlbum);
             const numPhotosIcon = document.createElement('p');
             numPhotosIcon.classList.add('photo-count-icon');
-            numPhotosIcon.innerHTML = key.length;
+            numPhotosIcon.innerHTML = item.photos.length;
             photoElement.appendChild(numPhotosIcon);
-        } else photo.src = BUCKET_URL + key;
+        } else {
+            photo.src = BUCKET_URL + item;
+            photo.setAttribute('data-photo-type', 'single');
+        }
 
         // Append to DOM
         photoElement.appendChild(photo);
@@ -111,9 +120,8 @@ const showAlbumPhotos = async (selectedAlbum) => {
 };
 
 const showSinglePhotoModal = (imageSrc) => {
-    document.getElementById(
-        'gallery-photo-modal'
-    ).innerHTML = `<div id="single-photo-modal" class="modal fade" tabindex="-1" role="dialog">
+    const modal = document.getElementById('gallery-photo-modal');
+    modal.innerHTML = `<div id="single-photo-modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -126,10 +134,35 @@ const showSinglePhotoModal = (imageSrc) => {
         </div>
     </div>`;
 
-    const modal = new bootstrap.Modal(
+    const boostrapModal = new bootstrap.Modal(
         document.getElementById('single-photo-modal')
     );
-    modal.show();
+    boostrapModal.show();
+};
+
+const showCollagePhotoModal = (imageSrcArray) => {
+    const modal = document.getElementById('gallery-photo-modal');
+    modal.innerHTML = `<div id="collage-photo-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    // get the modal-body div and append a carousel of images to it
+    modal
+        .getElementsByClassName('modal-body')[0] // safe assumption only one such element
+        .appendChild(createImageCarousel(imageSrcArray, 'collage-modal'));
+
+    const boostrapModal = new bootstrap.Modal(
+        document.getElementById('collage-photo-modal')
+    );
+    boostrapModal.show();
 };
 
 const hideAlbumPhotos = () => {
@@ -180,8 +213,16 @@ document.addEventListener('DOMContentLoaded', () => {
         .getElementById('gallery-photos')
         .addEventListener('click', (event) => {
             if (event.target.nodeName == 'IMG') {
-                // Create a modal with this image source
-                showSinglePhotoModal(event.target.getAttribute('src'));
+                const photoType = event.target.getAttribute('data-photo-type');
+                if (photoType === 'collage') {
+                    const albumName = event.target.getAttribute('data-album');
+                    const collageId =
+                        event.target.getAttribute('data-collage-id');
+                    const collagePhotos = galleryData
+                        .find((album) => album.albumName === albumName)
+                        .photoKeys.find((photo) => photo.id === collageId);
+                    showCollagePhotoModal(collagePhotos.photos);
+                } else showSinglePhotoModal(event.target.getAttribute('src'));
             }
         });
 });

@@ -22,7 +22,7 @@ const getPhotoKeysInFolder = async (prefix) => {
             })
             .promise();
 
-        return data.Contents;
+        return data.Contents.map((value) => value.Key);
     } catch (err) {
         console.log(`Error fetching ${prefix} photos :: `, err);
     }
@@ -52,7 +52,7 @@ const createImageCarousel = (photoKeys, carouselId) => {
         imageDiv.classList.add('carousel-item');
         const image = document.createElement('img');
         image.className = 'd-block w-100';
-        image.setAttribute('src', BUCKET_URL + photo.Key);
+        image.setAttribute('src', BUCKET_URL + photo);
         imageDiv.appendChild(image);
 
         if (photoIndex == 0) imageDiv.classList.add('active');
