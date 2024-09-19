@@ -10,14 +10,14 @@ const getPhotoKeysInFolder = async (prefix) => {
     const s3 = new AWS.S3({
         apiVersion: '2006-03-01',
         params: {
-            Bucket: 'handmade-by-maryna'
+            Bucket: BUCKET_NAME
         }
     });
 
     try {
         const data = await s3
             .listObjects({
-                Bucket: 'handmade-by-maryna',
+                Bucket: BUCKET_NAME,
                 Prefix: prefix
             })
             .promise();
