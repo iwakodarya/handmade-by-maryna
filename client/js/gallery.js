@@ -6,7 +6,15 @@ const galleryData = [
     {
         albumName: 'felting',
         displayName: 'Felting'
-    }
+    },
+    {
+        albumName: 'watercolor',
+        displayName: 'Watercolor'
+    },
+    {
+        albumName: 'ceramics',
+        displayName: 'Ceramics'
+    },
 ];
 
 const showGalleryMenu = async () => {
