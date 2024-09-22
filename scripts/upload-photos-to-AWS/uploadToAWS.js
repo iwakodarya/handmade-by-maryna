@@ -29,7 +29,10 @@ const getAccessToken = () => {
         }
     })
         .then((response) => response.json())
-        .then((result) => result.access_token)
+        .then((result) => {
+            if (result.access_token) return result.access_token;
+            else throw Error('Invalid access token.');
+        })
         .catch((err) => console.log('Error in getAccessToken:: ', err));
 };
 
@@ -193,7 +196,6 @@ const updateS3Bucket = async () => {
         return !photos.map((photo) => photo.key).includes(key);
     });
 
-    console.log(photosToDelete);
     // Run delete for any removed photos
     const deleteResult = await Promise.allSettled(
         photosToDelete.map((key) => deletePhotoFromAWS(myS3Client, key))

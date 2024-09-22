@@ -51,6 +51,7 @@ h3 {
 }
 
 a {
+    text-decoration: none;
     color: inherit;
     cursor: auto;
 }
